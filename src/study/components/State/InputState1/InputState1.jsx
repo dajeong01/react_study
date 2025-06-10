@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-function InputState1 () {
+function InputState1() {
 
-    const [ inputValue, setInputValue ] = useState("");
-    const [ h1Text, setH1Text ] = useState("");
+    const [inputValue, setInputValue] = useState("");
+    const [h1Text, setH1Text] = useState("");
 
-    const [ inputValue2, setInputValue2 ] = useState("");
-    const [ h1Text2, setH1Text2 ] = useState("");
-   
+    const [inputValue2, setInputValue2] = useState("");
+    const [h1Text2, setH1Text2] = useState("");
+
     console.log("렌더링");
 
     const handleOnChange = (e) => {

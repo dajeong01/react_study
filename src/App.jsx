@@ -9,6 +9,7 @@ import InputSample from './study/components/State/InputSample/InputSample'
 import InputState1 from './study/components/State/InputState1/InputState1'
 import InputStatePractice from './study/components/State/InputStatePractice/InputStatePractice'
 import InputState2 from './study/components/State/InputState2/InputState2'
+import InputState3 from './study/components/State/InputState3/InputState3'
 
 function App() {
   return <div>
@@ -22,7 +23,8 @@ function App() {
     // {/* // <InputSample />} */}
     // <InputStatePractice />}
     // <InputState2 />} */}
-    <InputState2 />}
+    // <InputState2 />}
+    <InputState3 />}
   
   </div>
 }
