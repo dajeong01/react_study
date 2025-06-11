@@ -33,11 +33,11 @@ function Effect1(props) {
         <div>
             <h1>{h1Name}</h1>
             <h1>{h1Age}</h1>
-            <input type="text" value={name} onChange={handleNameOnChange}/>
+            <input type="text" value={name} onChange={handleNameOnChange} />
             <button onClick={handleNameOnClick}>이름확인</button>
-            <input type="text" value={age} onChange={handleAgeOnChange}/>
+            <input type="text" value={age} onChange={handleAgeOnChange} />
             <button onClick={handleAgeOnClick}>나이확인</button>
-            
+
         </div>
     );
 }

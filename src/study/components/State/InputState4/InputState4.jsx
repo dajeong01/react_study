@@ -6,8 +6,8 @@ function Inputstate4() {
         price: "",
         stock: "",
     };
-    const [products, setProducts] = useState([]);                   // 배열
     const [inputValue, setInputValue] = useState(inputValueEmpty);  // 객체
+    const [products, setProducts] = useState([]);                   // 배열
 
     const handleOnChange = (e) => {
         // const {name, value} = e.target   // 이래쓰면 16번 대신 17번 쓰면됨

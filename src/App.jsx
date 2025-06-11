@@ -39,11 +39,11 @@ function App() {
       {/* <DomRef /> */}
       {/* <Effect1 /> */}
       {/* <Effect2 /> */}
-        <Emotion />
-        <Emotion2 />
+        {/* <Emotion />
+        <Emotion2 /> */}
       </>
-      {/* <Index /> */}
-      
+      <Index />
+
     </div>
   );
 }
