@@ -14,18 +14,18 @@ import InputState3 from './study/components/State/InputState3/InputState3'
 function App() {
   return <div>
     {
-    /* /* <HelloJsx /> */
-    // <HelloProps />}
-    // <CountState />}
-    // <CountHeader />}
-    // <Calculator />}
-    // <InputState1 />}
-    // {/* // <InputSample />} */}
-    // <InputStatePractice />}
-    // <InputState2 />} */}
-    // <InputState2 />}
-    <InputState3 />}
-  
+      // <HelloJsx /> 
+      // <HelloProps />
+      // <CountState />
+      // <CountHeader />
+      // <Calculator />
+      <InputState1 />
+      // <InputSample />
+      // <InputStatePractice />
+      // <InputState2 />
+      // <InputState2 />
+      // <InputState3 />
+    }
   </div>
 }
 
