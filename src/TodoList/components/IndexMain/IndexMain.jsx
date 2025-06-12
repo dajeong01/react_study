@@ -1,11 +1,67 @@
 /** @jsxImportSource @emotion/react */
 import * as s from './styles.js';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-function IndexMain(props) {
+function IndexMain({ todoList, setTodoList }) {
+    const [inputValue, setInputValue] = useState("");
+    const [contentOpenId, setContentOpenId] = useState(0);
+
+    const handleOnChange = (e) => {
+        setInputValue(e.target.value)
+    }
+
+    const handleOnKeyDown = (e) => {
+        if (e.keyCode !== 13) {
+            return;
+        }
+        console.log("todo 등록")
+        setTodoList(prev => {
+            const lastId = prev.length === 0 ? 0 : prev[prev.length - 1].id;
+            const newTodo = {
+                id: lastId + 1,
+                isComplete: true,
+                content: inputValue,
+            }
+            return [...prev, newTodo];
+        });
+        setInputValue("");
+    }
+
+    const handleCheckBoxOnChange = (e) => {
+        const todoId = parseInt(e.target.value);
+        setTodoList(prev => prev.map(todo => {
+                        if (todo.id === todoId) {
+                            return {
+                                ...todo,
+                                isComplete: !todo.isComplete,
+                            }
+                        }
+                        return todo;
+            }))
+    }
+    const handleContentOpenOnClick = (todoId) => {
+        setContentOpenId(prev => prev!==todoId ? todoId : 0);
+    }
+
     return (
-        <div>
-            
+        <div css={s.container}>
+            <div css={s.listContainer}>
+                <ul>
+                    {
+                        todoList.map(todo => (
+                            <li key={todo.id}>
+                                <input type="checkbox" id={`todo${todo.id}`} value={todo.id} checked={todo.isComplete} onChange={handleCheckBoxOnChange} />
+                                <label htmlFor={`todo${todo.id}`}></label>
+                                <div css={s.todoTextContainer(contentOpenId === todo.id)} onClick={() => handleContentOpenOnClick(todo.id)}>{todo.content}</div>
+                            </li>
+                        ))
+                    }
+
+                </ul>
+            </div>
+            <div css={s.todoInputContainer}>
+                <input type="text" value={inputValue} onChange={handleOnChange} onKeyDown={handleOnKeyDown} />
+            </div>
         </div>
     );
 }

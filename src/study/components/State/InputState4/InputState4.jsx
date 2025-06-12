@@ -55,11 +55,12 @@ function Inputstate4() {
                     </tr>
                 </thead>
                 <tbody>
-                    {products.map((product, index) => (<tr key={index}>
-                        <td>{product.productName}</td>
-                        <td>{product.price}</td>
-                        <td>{product.stock}</td>
-                    </tr>
+                    {products.map((product, index) => (
+                        <tr key={index}>
+                            <td>{product.productName}</td>
+                            <td>{product.price}</td>
+                            <td>{product.stock}</td>
+                        </tr>
                     ))}
                 </tbody>
             </table>
