@@ -8,7 +8,24 @@ function Index(props) {
     const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
+        const localStorageTodoList = localStorage.getItem("todoList");
+        if (!localStorageTodoList) {
+            localStorage.setItem("todoList", JSON.stringify([]));
+            localStorageTodoList = [];
+            setTodoList(localStorageTodoList);
+        } else {
+            setTodoList(JSON.parse(localStorageTodoList))
+        }
+    })
+
+    console.log(localStorage.getItem("name"))
+    console.log(localStorage.setItem("name","제다이"))
+    console.log(localStorage.getItem("name"))
+
+    useEffect(() => {
         console.log(todoList);
+        // setFilter("incomplete");
+        setSearchText("");
     }, [todoList]);
 
     const filterTodoList = todoList.filter(todo => {
