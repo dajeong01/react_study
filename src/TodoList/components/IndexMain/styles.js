@@ -65,9 +65,9 @@ export const todoTextContainer = (isOpen) => css`
         "word-wrap: break-word;" +
         "text-overflow: ellipsis;"
         :
-        "white-space: nowrap;" +
-        "text-overflow: ellipsis;" +
-        "overflow: hidden;"
+        `white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;`
     }
 `;
 

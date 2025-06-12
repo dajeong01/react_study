@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
+import IndexHeader from '../IndexHeader/IndexHeader';
+import * as s from './styles';
 import React from 'react';
-import * as s from './styles.js';
-import IndexHeader from '../IndexHeader/IndexHeader.jsx';
 
-function IndexLayout({children}) {  // props는 무조건 중괄호 치기
+function IndexLayout({ filter, setFilter, setSearchText, children }) {
     return (
         <div css={s.layout}>
-            <IndexHeader />
+            <IndexHeader filter={filter} setFilter={setFilter} setSearchText={setSearchText} />
             {children}
         </div>
     );
