@@ -12,17 +12,22 @@ function Index(props) {
     let localStorageTodoList = localStorage.getItem("todoList");
     if (!localStorageTodoList) {
       localStorage.setItem("todoList", JSON.stringify([]));
+      /* 
+      Uncaught SyntaxError: Unexpected token 'u', "function st"... is not valid JSON at JSON.parse
+      JSON.parse()가 제대로 된 JSON이 아닌 문자열을 파싱하려고 할 때 발생
+      localStorage.getItem("todoList");을 콘솔에 치면
+      아마도 undefined, function..., 또는 JSON이 아닌 문자열이 나올거
+      => localStorage.removeItem("todoList"); //잘못된 localStorage 데이터 삭제
+      */
       localStorageTodoList = [];
       setTodoList(localStorageTodoList);
     } else {
       setTodoList(JSON.parse(localStorageTodoList));
     }
     setLoad(true);
-  }, []); // [] 안 넣으면 무한루프 됨 ㅡㅡ 꼭 넣어라
+  }, []);
 
   useEffect(() => {
-    console.log(todoList);
-    // setFilter("incomplete");
     setSearchText("");
     if (isLoad) {
       let localStorageTodoList = localStorage.getItem("todoList");
