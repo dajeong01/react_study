@@ -1,23 +1,24 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useParams, useSearchParams } from "react-router-dom";
 
-/* PathParam */
+/** PathParam */
 function Component1() {
   const { name } = useParams();
   console.log(name);
+
   return <></>;
 }
 
-/* SearchParam */
+/** SearchParam */
 function Component2() {
-    const [searchParams, setSearchParams] = useSearchParams();
-    
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useEffect(() => {
     const entries = searchParams.entries();
     let searchParamObj = {};
     while (true) {
       const next = entries.next();
-      if (!next.done) {
+      if (next.done) {
         break;
       }
       const [key, value] = next.value;
@@ -27,12 +28,12 @@ function Component2() {
         [key]: value,
       };
     }
-      console.log(searchParamObj);
-      console.log(searchParams.getAll("address"));  
+    console.log(searchParamObj);
+    console.log(searchParams.getAll("address"));
   }, [searchParams]);
 
   const handleOnClick = () => {
-    setSearchParams(prev => {
+    setSearchParams((prev) => {
       prev.set("address", "busan");
       return prev;
     });
