@@ -1,6 +1,7 @@
 import "./App.css";
 
 // 컴포넌트 import
+import { BrowserRouter } from "react-router-dom";
 import HelloJsx from "./study/components/HelloJsx/HelloJsx";
 import HelloProps from "./study/components/HelloProps/HelloProps";
 import HelloReact from "./study/components/HelloReact/HelloReact";
@@ -20,7 +21,9 @@ import Emotion from "./study/components/Emotion/Emotion";
 import Emotion2 from "./study/components/Emotion/Emotion2";
 import Index from "./TodoList/pages/Index";
 import Router1 from "./RouterStudy/Router1/Router1";
-import { BrowserRouter } from "react-router-dom";
+import Router2 from "./RouterStudy/Router2/Router2";
+import Router3 from "./RouterStudy/Router3/Router3";
+import Router4 from "./RouterStudy/Router4/Router4";
 
 function App() {
   return (
@@ -43,7 +46,10 @@ function App() {
       {/* <Emotion />
         <Emotion2 /> */}
       {/* <Index /> */}
-      <Router1 />
+      {/* <Router1 /> */}
+      {/* <Router2 /> */}
+      {/* <Router3 /> */}
+      <Router4 />
     </BrowserRouter>
   );
 }
