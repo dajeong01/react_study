@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 /*
 경로(path) 관리
@@ -7,21 +13,20 @@ import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom"
 */
 
 function Router3(props) {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("경로이동함!!");
-      console.log(location.pathname); // 현재 경로
-      if (location.pathname === "/location/2") {
-          navigate("/location/3", {
-              state: {
-                  name: "제다정",
-                  age: 25,
-              }
-          }
-          );
-      }
+    console.log(location.pathname); // 현재 경로
+    if (location.pathname === "/location/2") {
+      navigate("/location/3", {
+        state: {
+          name: "제다정",
+          age: 25,
+        },
+      });
+    }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -32,7 +37,11 @@ function Router3(props) {
 
   useEffect(() => {
     console.log(location.state);
-  },[location.state]);
+  }, [location.state]);
+
+    const handleBackOnClick = () => {
+        navigate(-1);
+  };
 
   return (
     <div>
@@ -41,6 +50,7 @@ function Router3(props) {
       <Link to={"/location/3"}>location3-1</Link>
       <Link to={"/location/3?name=제다정"}>location3-2</Link>
       <Link to={"/location/?name=제다이"}>location3-3</Link>
+      <button onClick={handleBackOnClick}>뒤로가기</button>
       <Routes>
         <Route path="/location/1" element={<h1>Location1</h1>} />
         <Route path="/location/2" element={<h1>Location2</h1>} />
