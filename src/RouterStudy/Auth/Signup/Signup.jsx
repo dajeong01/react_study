@@ -6,13 +6,127 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 
 /* 유효성검사(Validation Check) */
 
-function Signup(props) {
+function useSignInAndUpInput({ type, name, placeholder, value, valid }) {
+  const STATUS = {
+    idle: "idle",
+    success: "success",
+    error: "error",
+  };
 
+  const [inputvalue, setInputValue] = useState(value);
+  const [status, setStatus] = useState(STATUS.idle);
+
+  const handleOnChange = (e) => {
+    setValue(e.target.value);
+  };
+
+  const handleOnBlur = (e) => {
+    if (isEmpty(value)) {
+      setStatus(STATUS.idle);
+      return;
+    }
+    if (valid.enabled) {
+      setStatus(valid.regex.test(value) ? STATUS.success : STATUS.error);
+    }
+  };
+
+  const isEmpty = (str) => {
+    return !/^.+$/.test(str);
+  };
+
+  return {
+    inputvalue,
+    element: (
+      <SignInAndUpInput
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={handleOnChange}
+        onBlur={handleOnBlur}
+        status={status}
+        message={valid.defaultMessage}
+      />
+    ),
+  };
+}
+
+function SignInAndUpInput({ type, name, placeholder, value, handleOnChange, handleOnBlur, status, message}) {
+
+  return (
+    <div css={s.inputItem}>
+      <div css={s.inputContainer(status)}>
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={handleOnChange}
+          onBlur={handleOnBlur}
+          status={status}
+          message={message}
+        />
+        <p onClick={() => setShowPassword((prev) => !prev)}>
+          {showPassword ? <IoEyeOff /> : <IoEye />}{" "}
+        </p>
+        {inputState.password.status !== "idle" &&
+          (inputState.password.status === "success" ? (
+            <div>
+              <MdOutlineCheckCircle />
+            </div>
+          ) : (
+            <div>
+              <MdOutlineErrorOutline />
+            </div>
+          ))}
+      </div>
+      <InputValidatedMessage status={status} message={message} />
+    </div>
+  );
+}
+
+function usePasswordInputHiddenButton() {
+  return {};
+}
+function PasswordInputHiddenButton() {
+  const [isShow, setShow] = useState(false);
+  const handleOnClick = () => {
+    setShow((prev) => !prev);
+  };
+  return <p onClick={handleOnClick}>{isShow ? <IoEyeOff /> : <IoEye />}</p>;
+}
+
+function useInputValidatedMessage({ defaultMessage }) {
+  const STATUS = {
+    idle: "idle",
+    success: "success",
+    error: "error",
+  };
+  const [status, setStatus] = useState("idle");
+  const [message, setMessage] = useState(defaultMessage || "");
+
+  return {
+    status,
+    setStatus,
+    message,
+    setMessage,
+    element: <InputValidatedMessage status={status} message={message} />,
+  };
+}
+
+function InputValidatedMessage({ status, message }) {
+  const ERROR = "error";
+  if (status === ERROR) {
+    return <div css={s.messageContainer()}>{message}</div>;
+  }
+  return <></>;
+}
+
+function Signup(props) {
   const [inputState, setInputState] = useState({
     username: {
       value: "",
-      message:
-        "아이디는 영문, 숫자를 포함 4~20자여야합니다.",
+      message: "아이디는 영문, 숫자를 포함 4~20자여야합니다.",
       regex: /^(?=.*[A-Za-z])(?=.*\d).{4,20}$/,
       status: "idle", // success(성공), error(오류), idle(초기 대기상태)
     },
@@ -46,18 +160,55 @@ function Signup(props) {
   const [showPassword, setShowPassword] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
+  const [inputs, setInputs] = useState([
+    {
+      type: "text",
+      name: "username",
+      value: "",
+      valid: {
+        enabled: true,
+        regex: /^(?=.*[A-Za-z])(?=.*\d).{4,20}$/,
+        message: "아이디는 영문, 숫자를 포함 4~20자여야합니다.",
+      },
+    },
+    {
+      type: "password",
+      name: "password",
+      value: "",
+      valid: {
+        enabled: true,
+        regex:
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^]{8,20}$/,
+        message:
+          "비밀번호는 8자 이상이며, 영문자, 숫자, 특수문자를 포함해야 합니다.",
+      },
+    },
+    {
+      type: "password",
+      name: "checkPassword",
+      value: "",
+      valid: {
+        enabled: true,
+        regex: null,
+        message: "비밀번호가 일치하지 않습니다.",
+      },
+    },
+  ]);
+
+  const inputItems = inputs.map(input => useSignInAndUpInput(input));
+
   const handleOnChange = (e) => {
-    setInputState(prev => ({
+    setInputState((prev) => ({
       ...prev,
       [e.target.name]: {
         ...prev[e.target.name],
         value: e.target.value,
-      }
-    }))
-  }
+      },
+    }));
+  };
 
   const handleOnBlur = (e) => {
-    if (!(/^.+$/.test(inputState[e.target.name].value))) {
+    if (!/^.+$/.test(inputState[e.target.name].value)) {
       setInputState((prev) => ({
         ...prev,
         [e.target.name]: {
@@ -73,152 +224,45 @@ function Signup(props) {
           ...prev,
           checkPassword: {
             ...prev["checkPassword"],
-            status: prev["checkPassword"].value === prev["password"].value ? "success" : "error"
+            status:
+              prev["checkPassword"].value === prev["password"].value
+                ? "success"
+                : "error",
           },
         }));
       }
-        return;
+      return;
     }
     setInputState((prev) => ({
       ...prev,
       [e.target.name]: {
         ...prev[e.target.name],
-        status: prev[e.target.name].regex.test(prev[e.target.name].value) ? "success" : "error"
+        status: prev[e.target.name].regex.test(prev[e.target.name].value)
+          ? "success"
+          : "error",
       },
     }));
-  }
+  };
 
   useEffect(() => {
-    setSubmitDisabled(!!Object.values(inputState).map(obj => obj.status).find(status => status !== "success"));
-  }, [inputState]); 
+    setSubmitDisabled(
+      !!Object.values(inputState)
+        .map((obj) => obj.status)
+        .find((status) => status !== "success")
+    );
+  }, [inputState]);
 
   return (
     <div css={s.layout}>
       <div css={s.container}>
         <h1 css={s.title}>회원가입</h1>
-        <div css={s.inputItem}>
-          <div css={s.inputContainer(inputState.username.status)}>
-            <input
-              type="text"
-              name="username"
-              placeholder="사용자이름"
-              value={inputState.username.value}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-            />
-            <div>
-              {inputState.username.status !== "idle" &&
-                (inputState.username.status === "success" ? (
-                  <MdOutlineCheckCircle />
-                ) : (
-                  <MdOutlineErrorOutline />
-                ))}
-            </div>
-          </div>
-          {inputState.username.status === "error" && (
-            <div css={s.messageContainer()}>{inputState.username.message}</div>
-          )}
-        </div>
-
-        <div css={s.inputItem}>
-          <div css={s.inputContainer(inputState.password.status)}>
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="비밀번호"
-              value={inputState.password.value}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-            />
-            <p onClick={() => setShowPassword((prev) => !prev)}>
-              {showPassword ? <IoEyeOff /> : <IoEye />}
-              {inputState.password.status !== "idle" &&
-                (inputState.password.status === "success" ? (
-                  <MdOutlineCheckCircle />
-                ) : (
-                  <MdOutlineErrorOutline />
-                ))}
-            </p>
-          </div>
-          {inputState.password.status === "error" && (
-            <div css={s.messageContainer()}>{inputState.password.message}</div>
-          )}
-        </div>
-
-        <div css={s.inputItem}>
-          <div css={s.inputContainer(inputState.checkPassword.status)}>
-            <input
-              type={showPassword ? "text" : "password"}
-              name="checkPassword"
-              placeholder="비밀번호확인"
-              value={inputState.checkPassword.value}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-            />
-            <div>
-              {inputState.checkPassword.status !== "idle" &&
-                (inputState.checkPassword.status === "success" ? (
-                  <MdOutlineCheckCircle />
-                ) : (
-                  <MdOutlineErrorOutline />
-                ))}
-            </div>
-          </div>
-          {inputState.checkPassword.status === "error" && (
-            <div css={s.messageContainer()}>
-              {inputState.checkPassword.message}
-            </div>
-          )}
-        </div>
-
-        <div css={s.inputItem}>
-          <div css={s.inputContainer(inputState.fullName.status)}>
-            <input
-              type="text"
-              name="fullName"
-              placeholder="풀네임"
-              value={inputState.fullName.value}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-            />
-            <div>
-              {inputState.fullName.status !== "idle" &&
-                (inputState.fullName.status === "success" ? (
-                  <MdOutlineCheckCircle />
-                ) : (
-                  <MdOutlineErrorOutline />
-                ))}
-            </div>
-          </div>
-          {inputState.fullName.status === "error" && (
-            <div css={s.messageContainer()}>{inputState.fullName.message}</div>
-          )}
-        </div>
-        <div css={s.inputItem}>
-          <div css={s.inputContainer(inputState.email.status)}>
-            <input
-              type="text"
-              name="email"
-              placeholder="이메일"
-              value={inputState.email.value}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-            />
-            <div>
-              {inputState.email.status !== "idle" &&
-                (inputState.email.status === "success" ? (
-                  <MdOutlineCheckCircle />
-                ) : (
-                  <MdOutlineErrorOutline />
-                ))}
-            </div>
-          </div>
-          {inputState.email.status === "error" && (
-            <div css={s.messageContainer()}>{inputState.email.message}</div>
-          )}
-        </div>
+        {
+          inputItems.map(inputItem => inputItem.element)
+        }
       </div>
-      <button css={s.submitButton} disabled={submitDisabled}>가입하기</button>
+      <button css={s.submitButton} disabled={submitDisabled}>
+        가입하기
+      </button>
     </div>
   );
 }
