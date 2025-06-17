@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import { CiCircleCheck } from "react-icons/ci";
 import * as s from "./styles";
-import React, { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineCheckCircle, MdOutlineErrorOutline } from "react-icons/md";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 /**
  *  유효성검사(Validation Check)
@@ -19,9 +20,7 @@ function useSignInAndUpInput({ id, type, name, placeholder, value, valid }) {
   const [status, setStatus] = useState(STATUS.idle);
 
   const handleOnChange = (e) => {
-    console.log(e.target.value);
     setInputValue(e.target.value);
-    return;
   };
 
   const handleOnBlur = (e) => {
@@ -45,8 +44,9 @@ function useSignInAndUpInput({ id, type, name, placeholder, value, valid }) {
   };
 
   return {
-    inputValue,
-    status,
+    name: name,
+    value: inputValue,
+    status: status,
     element: (
       <SignInAndUpInput
         key={id}
@@ -75,6 +75,7 @@ function SignInAndUpInput({
 }) {
   const { isShow, element: PasswordInputHiddenButton } =
     usePasswordInputHiddenButton();
+
   return (
     <div css={s.inputItem}>
       <div css={s.inputContainer(status)}>
@@ -105,9 +106,11 @@ function SignInAndUpInput({
 
 function usePasswordInputHiddenButton() {
   const [isShow, setShow] = useState(false);
+
   const handleOnClick = () => {
     setShow((prev) => !prev);
   };
+
   return {
     isShow,
     element: (
@@ -122,13 +125,16 @@ function PasswordInputHiddenButton({ isShow, onClick }) {
 
 function InputValidatedMessage({ status, message }) {
   const ERROR = "error";
+
   if (status === ERROR) {
     return <div css={s.messageContainer()}>{message}</div>;
   }
+
   return <></>;
 }
 
 function Signup(props) {
+  const navigate = useNavigate();
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const inputs = [
     {
@@ -151,8 +157,10 @@ function Signup(props) {
       value: "",
       valid: {
         enabled: true,
-        regex: /^(?=.*[a-z])(?=.*\d).{4,20}$/,
-        message: "아이디는 영문, 숫자를 포함 4~20자여야 합니다.",
+        regex:
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).{8,20}$/,
+        message:
+          "비밀번호는 8~20자이며, 영문·숫자·특수문자를 모두 포함해야 합니다.",
       },
     },
     {
@@ -195,13 +203,40 @@ function Signup(props) {
   ];
 
   const inputItems = inputs.map((input) => useSignInAndUpInput(input));
-  // [input, input] => [useSignInAndUpInput(리턴값), useSignInAndUpInput(리턴값)]
+  // [input, input] -> [useSignInAndUpInput(리턴값), useSignInAndUpInput(리턴값)]
 
   useEffect(() => {
     setSubmitDisabled(
-      !!inputItems.find((inputItems) => inputItems.status !== "success")
+      !!inputItems.find((inputItem) => inputItem.status !== "success")
     );
   }, [inputItems]);
+
+  const handleRegisterOnClick = async () => {
+    const url = "http://localhost:8080/api/users";
+
+    let data = {};
+
+    inputItems.forEach((inputItem) => {
+      data = {
+        ...data,
+        [inputItem.name]: inputItem.value,
+      };
+    });
+
+    try {
+      const response = await axios.post(url, data);
+      alert("사용자 등록 완료");
+
+      navigate("/users/signin", {
+        state: {
+          username: response.data.username,
+          password: inputItems.find(inputItem => inputItem.name === "password").value,
+        },
+      }); 
+    } catch (error) {
+      alert("사용자 등록 오류");
+    }
+  };
 
   return (
     <div css={s.layout}>
@@ -209,7 +244,11 @@ function Signup(props) {
         <h1 css={s.title}>회원가입</h1>
         {inputItems.map((inputItem) => inputItem.element)}
       </div>
-      <button css={s.submitButton} disabled={submitDisabled}>
+      <button
+        css={s.submitButton}
+        disabled={submitDisabled}
+        onClick={handleRegisterOnClick}
+      >
         가입하기
       </button>
     </div>
@@ -217,3 +256,8 @@ function Signup(props) {
 }
 
 export default Signup;
+
+/**
+ * username, password, checkpassword, fullname(한글), email
+ * javascript 정규표현식을 각각 만들어주고 error메세지도 만들어줘
+ */
