@@ -71,20 +71,22 @@ function SignInAndUpInput({
   onChange,
   onBlur,
   status,
-  message
+  message,
 }) {
-  const { isShow, element: PasswordInputHiddenButton } = usePasswordInputHiddenButton;
+  const { isShow, element: PasswordInputHiddenButton } =
+    usePasswordInputHiddenButton();
   return (
     <div css={s.inputItem}>
       <div css={s.inputContainer(status)}>
         <input
-          type={type}
+          type={type === "password" ? (isShow ? "text" : "password") : type}
           name={name}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
           onBlur={onBlur}
         />
+        {type === "password" && PasswordInputHiddenButton}
         {status !== "idle" &&
           (status === "success" ? (
             <div>
@@ -108,39 +110,21 @@ function usePasswordInputHiddenButton() {
   };
   return {
     isShow,
-    element: <PasswordInputHiddenButton isShow={isShow} onClick={onClick} />,
+    element: (
+      <PasswordInputHiddenButton isShow={isShow} onClick={handleOnClick} />
+    ),
   };
 }
 
-function PasswordInputHiddenButton(isShow, onClick) {
+function PasswordInputHiddenButton({ isShow, onClick }) {
   return <p onClick={onClick}>{isShow ? <IoEyeOff /> : <IoEye />}</p>;
-}
-
-function useInputValidatedMessage({ defaultMessage }) {
-  const STATUS = {
-    idle: "idle",
-    success: "success",
-    error: "error",
-  };
-  const [status, setStatus] = useState(STATUS.idle);
-  const [message, setMessage] = useState(defaultMessage || "");
-
-  return {
-    status,
-    setStatus,
-    message,
-    setMessage,
-    element: <InputValidatedMessage status={status} message={message} />,
-  };
 }
 
 function InputValidatedMessage({ status, message }) {
   const ERROR = "error";
-
   if (status === ERROR) {
     return <div css={s.messageContainer()}>{message}</div>;
   }
-
   return <></>;
 }
 
@@ -211,10 +195,13 @@ function Signup(props) {
   ];
 
   const inputItems = inputs.map((input) => useSignInAndUpInput(input));
+  // [input, input] => [useSignInAndUpInput(리턴값), useSignInAndUpInput(리턴값)]
 
-  // useEffect(() => {
-  //     setSubmitDisabled(!!Object.values(inputState).map(obj => obj.status).find(status => status !== "success"));
-  // }, [inputState]);
+  useEffect(() => {
+    setSubmitDisabled(
+      !!inputItems.find((inputItems) => inputItems.status !== "success")
+    );
+  }, [inputItems]);
 
   return (
     <div css={s.layout}>
@@ -230,8 +217,3 @@ function Signup(props) {
 }
 
 export default Signup;
-
-/**
- * username, password, checkpassword, fullname(한글), email
- * javascript 정규표현식을 각각 만들어주고 error메세지도 만들어줘
- */
