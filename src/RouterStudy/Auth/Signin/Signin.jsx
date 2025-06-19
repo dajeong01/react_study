@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { MdOutlineCheckCircle, MdOutlineErrorOutline } from "react-icons/md";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useRefreshStore } from "../stores/storeStudy";
 
 /**
  *  유효성검사(Validation Check)
@@ -138,8 +139,10 @@ function InputValidatedMessage({ status, message }) {
   return <></>;
 }
 
-function Signin(props) {
+function Signin() {
+  const navigate = useNavigate();
   const location = useLocation();
+  const {setRefresh} = useRefreshStore();
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const inputs = [
     {
@@ -207,6 +210,8 @@ function Signin(props) {
       const accessToken = response.data?.accessToken;
       if (!!accessToken) {
         localStorage.setItem("AccessToken", accessToken);
+        setRefresh(prev => true);
+        navigate("/");
       }
       alert("로그인 요청 완료");
     } catch (error) {
@@ -234,8 +239,3 @@ function Signin(props) {
 }
 
 export default Signin;
-
-/**
- * username, password, checkpassword, fullname(한글), email
- * javascript 정규표현식을 각각 만들어주고 error메세지도 만들어줘
- */
