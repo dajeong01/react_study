@@ -190,9 +190,9 @@ function Signin(props) {
     const url = "http://localhost:8080/api/users/login";
 
     // 컨트롤러 메서드명 login
-    // Dto명 LoginDto 
+    // Dto명 LoginDto
     // post 요청
-    
+
     let data = {};
 
     inputItems.forEach((inputItem) => {
@@ -210,6 +210,8 @@ function Signin(props) {
       }
       alert("로그인 요청 완료");
     } catch (error) {
+      const { response, status } = error;
+      console.log(response.data);
       alert("로그인 오류");
     }
   };
