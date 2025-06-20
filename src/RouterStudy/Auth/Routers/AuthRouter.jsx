@@ -3,6 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import Mypage from "../Mypage/Mypage";
 import NotFound from "../NotFound/NotFound";
 
+function Logout() {
+
+}
+
 function AuthRouter(props) {
   return (
     <Routes>

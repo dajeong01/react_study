@@ -230,9 +230,11 @@ function Signup(props) {
       navigate("/users/signin", {
         state: {
           username: response.data.username,
-          password: inputItems.find(inputItem => inputItem.name === "password").value,
+          password: inputItems.find(
+            (inputItem) => inputItem.name === "password"
+          ).value,
         },
-      }); 
+      });
     } catch (error) {
       alert("사용자 등록 오류");
     }

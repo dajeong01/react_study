@@ -7,7 +7,7 @@ import AuthRouter from "./AuthRouter";
 import NotFound from "../NotFound/NotFound";
 import RootHeader from "../RootHeader/RootHeader";
 import axios from "axios";
-import { useRefreshStore } from "../stores/storeStudy";
+import { useGlobalStateStore, useRefreshStore } from "../stores/storeStudy";
 
 /*
 전역 상태 관리
@@ -17,7 +17,9 @@ import { useRefreshStore } from "../stores/storeStudy";
 
 function MainRouter(props) {
   const [isLogin, setLogin] = useState(false);
-  const { isRefresh, setRefresh} = useRefreshStore();
+  const { value: isRefresh, setValue: setRefresh } = useRefreshStore();
+  const { name, setName, setName2 } = useGlobalStateStore();
+
   // const [refresh, setRefresh] = useState(true);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ function MainRouter(props) {
             }
           });
       }
-      setRefresh(prev => false)
+      setRefresh((prev) => false);
     }
   }, [isRefresh]);
 
@@ -46,7 +48,7 @@ function MainRouter(props) {
       <Routes>
         <Route path="" element={<Home />} />
         <Route path="/auth/*" element={<AuthRouter />} />
-        <Route path="/users/*" element={<UnAuthRouter/>} />
+        <Route path="/users/*" element={<UnAuthRouter />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </RootLayout>

@@ -7,7 +7,7 @@ import NotFound from "../NotFound/NotFound";
 function UnAuthRouter() {
   return (
     <Routes>
-      <Route path="/signin" element={<Signin/>} />
+      <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
